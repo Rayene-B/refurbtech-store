@@ -1,0 +1,244 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RefurbTech</title>
+  <style>
+    :root {
+      --bg: linear-gradient(135deg, #eef2ff, #f8fafc 40%, #fdf2f8);
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #e5e7eb;
+      --accent-strong: #cbd5e1;
+      --accent-dark: #0f172a;
+      --brand: #2563eb;
+      --shadow: 0 20px 60px rgba(15,23,42,0.08);
+    }
+    body.dark {
+      --bg: radial-gradient(circle at 10% 20%, #111827, #0b1220 50%, #0b1220);
+      --card: #0f172a;
+      --text: #e2e8f0;
+      --muted: #cbd5e1;
+      --accent: #1f2937;
+      --accent-strong: #111827;
+      --accent-dark: #e2e8f0;
+      --brand: #60a5fa;
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    .page-wrap {
+      width: min(1100px, 94vw);
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+    }
+    .shell {
+      width: 100%;
+      padding: 42px 38px 34px;
+      background: var(--card);
+      border: 1px solid rgba(148,163,184,0.35);
+      border-radius: 18px;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: var(--accent-dark);
+    }
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--brand);
+      box-shadow: 0 0 0 6px rgba(37,99,235,0.12);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .store-name {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 76px);
+      line-height: 0.92;
+      letter-spacing: 0.6px;
+      color: var(--accent-dark);
+      text-align: center;
+      font-weight: 900;
+      text-wrap: balance;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 34px);
+      letter-spacing: 0.4px;
+    }
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    button {
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 0;
+      border: 1px solid rgba(148,163,184,0.6);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      color: #0f172a;
+      font-size: 16px;
+      letter-spacing: 0.2px;
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(148,163,184,0.9);
+      box-shadow: 0 12px 28px rgba(15,23,42,0.12);
+    }
+    button:active {
+      transform: translateY(0);
+      border-color: var(--accent-strong);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.14);
+    }
+    .banner {
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+      display: block;
+    }
+    .button-body {
+      padding: 20px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .button-body span:first-child {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .meta {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 13px;
+      color: #0f172a;
+    }
+    .theme-toggle {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 10px 24px rgba(15,23,42,0.16);
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <p class="store-name">GARAD's Refurb Tech</p>
+    <main class="shell">
+      <div class="top-bar">
+        <div class="brand"><span class="brand-dot"></span>RefurbTech</div>
+      </div>
+
+      <div class="hero">
+        <div>
+          <h1>Pick your category</h1>
+          <p class="subtitle">Curated, refurbished tech with up to 2-year warranty.</p>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button type="button" data-target="phones.html">
+          <img class="banner" src="phones banner.png" alt="Phones banner">
+          <div class="button-body">
+            <span>Phones</span>
+            <span class="meta">12 models</span>
+          </div>
+        </button>
+        <button type="button" data-target="laptops.html">
+          <img class="banner" src="laptops banner.png" alt="Laptops banner">
+          <div class="button-body">
+            <span>Laptops</span>
+            <span class="meta">8 models</span>
+          </div>
+        </button>
+        <button type="button" data-target="consoles.html">
+          <img class="banner" src="consoles banner.png" alt="Consoles banner">
+          <div class="button-body">
+            <span>Consoles</span>
+            <span class="meta">10 models</span>
+          </div>
+        </button>
+      </div>
+    </main>
+  </div>
+  <button class="theme-toggle" id="theme-toggle" type="button">🌞 Light</button>
+  <script>
+    // Redirect any element with data-target to its matching page
+    document.querySelectorAll('[data-target]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        if (target) {
+          window.location.href = target;
+        }
+      });
+    });
+    const toggleBtn = document.getElementById('theme-toggle');
+    const applyTheme = (mode) => {
+      document.body.classList.toggle('dark', mode === 'dark');
+      toggleBtn.textContent = mode === 'dark' ? '🌙 Dark' : '🌞 Light';
+      localStorage.setItem('theme', mode);
+    };
+    const stored = localStorage.getItem('theme') || 'light';
+    applyTheme(stored);
+    toggleBtn.addEventListener('click', () => {
+      const next = document.body.classList.contains('dark') ? 'light' : 'dark';
+      applyTheme(next);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Phones</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #f8fafc;
+      --text: #0f172a;
+      --accent: #e5e7eb;
+      --accent-strong: #cbd5e1;
+      --muted: #475569;
+      --shadow: 0 20px 60px rgba(15,23,42,0.08);
+    }
+    body.dark {
+      --bg: #0b1220;
+      --card: #0f172a;
+      --text: #e2e8f0;
+      --accent: #1f2937;
+      --accent-strong: #111827;
+      --muted: #cbd5e1;
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    .shell {
+      width: min(1400px, 98vw);
+      padding: 32px;
+      background: var(--card);
+      border: 1px solid rgba(148,163,184,0.35);
+      border-radius: 18px;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08);
+      min-height: 90vh;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 240px;
+      gap: 32px;
+      align-items: stretch;
+    }
+    .main-content { text-align: center; }
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 38px);
+      letter-spacing: 0.5px;
+    }
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 12px;
+    }
+    .title-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-btn {
+      cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      color: #0f172a;
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+    }
+    .nav-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(148,163,184,0.9);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.12);
+    }
+    .nav-btn:active {
+      transform: translateY(0);
+      border-color: var(--accent-strong);
+      box-shadow: 0 5px 12px rgba(15,23,42,0.14);
+    }
+    .filter-btn {
+      cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      border-radius: 10px;
+      padding: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+    }
+    .filter-btn img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    .filter-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(148,163,184,0.9);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.12);
+    }
+    .filter-btn:active {
+      transform: translateY(0);
+      border-color: var(--accent-strong);
+      box-shadow: 0 5px 12px rgba(15,23,42,0.14);
+    }
+    .bag-btn {
+      cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      border-radius: 999px;
+      padding: 10px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: #0f172a;
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+    }
+    .bag-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(148,163,184,0.9);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.12);
+    }
+    .bag-count {
+      min-width: 24px;
+      height: 24px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #0f172a;
+      color: #f8fafc;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .subtitle {
+      margin: 0 0 18px;
+      font-size: 16px;
+      color: #475569;
+    }
+    .search-row {
+      display: flex;
+      justify-content: center;
+      margin: 0 0 18px;
+    }
+    .search-input {
+      width: min(420px, 100%);
+      padding: 12px 14px;
+      border: 1px solid rgba(148,163,184,0.6);
+      border-radius: 12px;
+      background: #fff;
+      font-size: 15px;
+      color: #0f172a;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      justify-items: stretch;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+    .item-btn {
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 26px 30px;
+      border: 1px solid rgba(148,163,184,0.6);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      color: #0f172a;
+      font-size: 16px;
+      letter-spacing: 0.2px;
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+      backdrop-filter: blur(4px);
+    }
+    .item-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(148,163,184,0.9);
+      box-shadow: 0 12px 28px rgba(15,23,42,0.12);
+    }
+    .item-btn:active {
+      transform: translateY(0);
+      border-color: var(--accent-strong);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.14);
+    }
+    .item-btn img {
+      width: 120px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(15,23,42,0.12);
+    }
+    .small-img {
+      width: 110px;
+      height: 130px;
+    }
+    .item-btn span {
+      font-size: 14px;
+      color: #0f172a;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .price-tag {
+      min-width: 118px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f8fafc;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.18);
+    }
+    .details {
+      display: none;
+    }
+    .detail-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .detail-row:last-child { margin-bottom: 0; }
+    .detail-label { color: var(--muted); }
+    .detail-value { color: var(--text); text-align: right; }
+    .card.open .item-btn { border-color: #2563eb; box-shadow: 0 12px 28px rgba(37,99,235,0.18); }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 20;
+    }
+    .overlay.show { display: flex; }
+    .modal {
+      background: var(--card);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 1080px;
+      width: min(94vw, 1080px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 26px;
+      position: relative;
+    }
+    .modal img {
+      width: 100%;
+      height: 340px;
+      object-fit: contain;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      box-shadow: 0 8px 22px rgba(15,23,42,0.12);
+    }
+    .modal h3 { margin: 0 0 10px; }
+    .modal .price { font-weight: 700; margin: 0 0 12px; }
+    .option-group {
+      margin: 14px 0;
+      display: grid;
+      gap: 10px;
+    }
+    .option-group label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .option-select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid rgba(148,163,184,0.5);
+      border-radius: 12px;
+      background: #fff;
+      color: #0f172a;
+      font-size: 14px;
+    }
+    .quantity-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .quantity-select {
+      width: 88px;
+      padding: 10px 12px;
+      border: 1px solid rgba(148,163,184,0.5);
+      border-radius: 12px;
+      background: #fff;
+      color: #0f172a;
+      font-size: 14px;
+    }
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 8px;
+    }
+    .add-bag-btn {
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #eff6ff;
+      font-weight: 700;
+      box-shadow: 0 12px 24px rgba(37,99,235,0.22);
+    }
+    .bag-message {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .similar-products {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--accent);
+    }
+    .similar-products h4 {
+      margin: 0 0 12px;
+      font-size: 15px;
+    }
+    .similar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .similar-card {
+      cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.45);
+      border-radius: 14px;
+      padding: 10px;
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      display: grid;
+      gap: 8px;
+    }
+    .similar-card img {
+      width: 100%;
+      height: 110px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #fff;
+    }
+    .similar-card strong {
+      font-size: 13px;
+      color: #0f172a;
+    }
+    .similar-card span {
+      font-size: 12px;
+      color: #475569;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .side-tab, .filter-tab {
+      background: var(--card);
+      border: 1px solid rgba(148,163,184,0.35);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.08);
+      height: 100%;
+      align-self: stretch;
+      color: var(--text);
+    }
+    .side-tab h2, .filter-tab h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      color: var(--text);
+      text-align: left;
+    }
+    .category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+      text-align: left;
+    }
+    .category-list button {
+      width: 100%;
+      padding: 10px 12px;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      border: 1px solid rgba(148,163,184,0.6);
+      border-radius: 10px;
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      color: #0f172a;
+    }
+    .filter-tab label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    .filter-tab label input { accent-color: #2563eb; }
+    .sort-options {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--accent);
+      display: none;
+      gap: 8px;
+      flex-direction: column;
+    }
+    .sort-options.show { display: flex; }
+    .sort-options label { font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .theme-toggle {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 10px 24px rgba(15,23,42,0.16);
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <aside class="side-tab">
+      <h2>Categories</h2>
+      <div class="category-list">
+        <button type="button" data-target="phones.html">Mobile Phones</button>
+        <button type="button" data-target="laptops.html">Laptops</button>
+        <button type="button" data-target="consoles.html">Consoles</button>
+      </div>
+    </aside>
+
+    <section class="main-content">
+      <div class="title-row">
+        <div class="title-actions">
+          <button class="nav-btn" type="button" id="back-btn">Back</button>
+          <h1>Mobile Phones</h1>
+        </div>
+        <div class="top-controls">
+          <button class="bag-btn" type="button" id="bag-btn" aria-label="Open bag">
+            <span>Cart</span>
+            <span class="bag-count" id="bag-count">0</span>
+          </button>
+          <button class="filter-btn" type="button" aria-label="Open filters">
+            <img src="filter.png" alt="">
+          </button>
+        </div>
+      </div>
+      <div class="search-row">
+        <input class="search-input" type="text" placeholder="Search here">
+      </div>
+      <p class="subtitle">Our best sellers</p>
+      <div class="buttons">
+        <div class="card" data-brand="iphone"><button class="item-btn" type="button"><img src="iphone 11.png" alt="iphone 11"><span>iphone 11</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="samsung"><button class="item-btn" type="button"><img src="samsung s22 ultra.png" alt="samsung s22 ultra"><span>samsung s22 ultra</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="iphone"><button class="item-btn" type="button"><img class="small-img" src="iphone 12.png" alt="iphone 12"><span>iphone 12</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="samsung"><button class="item-btn" type="button"><img src="samsung s23.png" alt="samsung s23"><span>samsung s23</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="iphone"><button class="item-btn" type="button"><img src="iphone 15.png" alt="iphone 15"><span>iphone 15</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="samsung"><button class="item-btn" type="button"><img src="samsung S22.png" alt="samsung S22"><span>samsung S22</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="iphone"><button class="item-btn" type="button"><img src="iphone 16.png" alt="iphone 16"><span>iphone 16</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="samsung"><button class="item-btn" type="button"><img src="samsung s24.png" alt="samsung s24"><span>samsung s24</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="iphone"><button class="item-btn" type="button"><img class="small-img" src="iphone 14.png" alt="iphone 14"><span>iphone 14</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="samsung"><button class="item-btn" type="button"><img src="samsung s24 ultra.png" alt="samsung s24 ultra"><span>samsung s24 ultra</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="iphone"><button class="item-btn" type="button"><img src="s-l640.png" alt="s-l640"><span>s-l640</span></button><div class="price-tag"></div></div>
+        <div class="card" data-brand="iphone"><button class="item-btn" type="button"><img src="Iphone 6s" alt="Iphone 6s"><span>Iphone 6s</span></button><div class="price-tag"></div></div>
+      </div>
+    </section>
+
+    <aside class="filter-tab">
+      <h2>Brands</h2>
+      <label><input type="checkbox" value="iphone"> iPhone</label>
+      <label><input type="checkbox" value="samsung"> Samsung</label>
+      <div class="sort-options" id="sort-options">
+        <label><input type="radio" name="sort" value="low"> Price: Low to High</label>
+        <label><input type="radio" name="sort" value="high"> Price: High to Low</label>
+        <label><input type="radio" name="sort" value="newest"> Newest</label>
+      </div>
+    </aside>
+  </main>
+  <button class="theme-toggle" id="theme-toggle" type="button">Light</button>
+  <div class="overlay" id="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" aria-label="Close">×</button>
+      <img id="modal-img" alt="">
+      <div>
+        <h3 id="modal-title"></h3>
+        <p class="price" id="modal-price">Set price below</p>
+        <div id="modal-details"></div>
+        <div class="option-group">
+          <label for="storage-select">Storage
+            <select class="option-select" id="storage-select"></select>
+          </label>
+          <label for="color-select">Color
+            <select class="option-select" id="color-select"></select>
+          </label>
+          <div class="quantity-row">
+            <label for="quantity-select">Quantity</label>
+            <select class="quantity-select" id="quantity-select">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="add-bag-btn" id="add-to-bag" type="button">Add to Bag</button>
+          <span class="bag-message" id="bag-message"></span>
+        </div>
+        <div class="similar-products">
+          <h4>Similar phones</h4>
+          <div class="similar-grid" id="similar-products"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const bagStorageKey = 'refurbtech-bag';
+    document.getElementById('back-btn').addEventListener('click', () => {
+      window.location.href = 'mainscreen.html';
+    });
+    document.querySelectorAll('[data-target]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        if (target) window.location.href = target;
+      });
+    });
+    const toggleBtn = document.getElementById('theme-toggle');
+    const applyTheme = (mode) => {
+      document.body.classList.toggle('dark', mode === 'dark');
+      toggleBtn.textContent = mode === 'dark' ? 'Dark' : 'Light';
+      localStorage.setItem('theme', mode);
+    };
+    const stored = localStorage.getItem('theme') || 'light';
+    applyTheme(stored);
+    toggleBtn.addEventListener('click', () => {
+      const next = document.body.classList.contains('dark') ? 'light' : 'dark';
+      applyTheme(next);
+    });
+    const sortBtn = document.querySelector('.filter-btn');
+    const sortOptions = document.getElementById('sort-options');
+    sortBtn.addEventListener('click', () => {
+      sortOptions.classList.toggle('show');
+    });
+
+    // expandable cards via modal
+    const cards = document.querySelectorAll('.card');
+    const brandFilters = document.querySelectorAll('.filter-tab input[type="checkbox"]');
+    const overlay = document.getElementById('modal-overlay');
+    const modalTitle = document.getElementById('modal-title');
+    const modalPrice = document.getElementById('modal-price');
+    const modalDetails = document.getElementById('modal-details');
+    const modalImg = document.getElementById('modal-img');
+    const closeBtn = overlay.querySelector('.modal-close');
+    const storageSelect = document.getElementById('storage-select');
+    const colorSelect = document.getElementById('color-select');
+    const quantitySelect = document.getElementById('quantity-select');
+    const addToBagBtn = document.getElementById('add-to-bag');
+    const bagMessage = document.getElementById('bag-message');
+    const bagBtn = document.getElementById('bag-btn');
+    const bagCount = document.getElementById('bag-count');
+    const similarProducts = document.getElementById('similar-products');
+    let activeProduct = null;
+
+    const fallback = { storage: '64 / 128 / 256 GB', warranty: '12 months', colors: 'Black / Silver', reviews: '4.5★' };
+    const detailsByName = {
+      'iphone 11': { storage: '64 / 128 / 256 GB', warranty: '12 months', colors: 'Black, White, Red', reviews: '4.6★' },
+      'iphone 12': { storage: '64 / 128 / 256 GB', warranty: '12 months', colors: 'Black, White, Blue', reviews: '4.5★' },
+      'iphone 14': { storage: '128 / 256 / 512 GB', warranty: '24 months', colors: 'Midnight, Starlight', reviews: '4.7★' },
+      'iphone 15': { storage: '128 / 256 / 512 GB', warranty: '24 months', colors: 'Black, Blue, Pink', reviews: '4.8★' },
+      'iphone 16': { storage: '128 / 256 / 512 GB', warranty: '24 months', colors: 'Graphite, Mint', reviews: '4.9★' },
+      'iphone 6s': { storage: '32 / 64 / 128 GB', warranty: '6 months', colors: 'Space Gray, Rose Gold', reviews: '4.0★' },
+      'samsung s22 ultra': { storage: '128 / 256 / 512 GB', warranty: '12 months', colors: 'Black, Cream, Green', reviews: '4.7★' },
+      'samsung s23': { storage: '128 / 256 / 512 GB', warranty: '12 months', colors: 'Lavender, Cream', reviews: '4.6★' },
+      'samsung s24': { storage: '128 / 256 / 512 GB', warranty: '24 months', colors: 'Black, Gray', reviews: '4.8★' },
+      'samsung s24 ultra': { storage: '256 / 512 / 1TB', warranty: '24 months', colors: 'Titanium Gray, Violet', reviews: '4.9★' },
+      'samsung s22': { storage: '128 / 256 GB', warranty: '12 months', colors: 'Phantom Black, White', reviews: '4.5★' },
+      's-l640': { storage: '64 / 128 GB', warranty: '12 months', colors: 'Black, Silver', reviews: '4.3★' },
+    };
+
+    const defaultPrices = {
+      'iphone 11': '100',
+      'samsung s22 ultra': '215',
+      'iphone 12': '115',
+      'samsung s23': '145',
+      'iphone 15': '325',
+      'samsung s22': '95',
+      'iphone 16': '485',
+      'samsung s24': '285',
+      'iphone 14': '175',
+      'samsung s24 ultra': '525',
+      's-l640': '189',
+      'iphone 6s': '29',
+    };
+    const conditionLabels = ['Great Condition', 'Like New', 'Fairly Used'];
+    const conditionDescriptions = {
+      'Great Condition': 'Shows light cosmetic wear but has been fully tested and performs reliably.',
+      'Like New': 'Very clean overall with minimal visible wear and strong day-to-day performance.',
+      'Fairly Used': 'Noticeable signs of use are possible, but the phone remains fully functional.',
+    };
+    const pickRandomCondition = () => conditionLabels[Math.floor(Math.random() * conditionLabels.length)];
+    const enrichedDetailsByName = Object.fromEntries(
+      Object.entries(detailsByName).map(([name, info]) => {
+        const condition = pickRandomCondition();
+        return [name, {
+          ...info,
+          condition,
+          description: `${condition}: ${conditionDescriptions[condition]}`
+        }];
+      })
+    );
+    const fallbackDetails = {
+      ...fallback,
+      condition: 'Great Condition',
+      description: `Great Condition: ${conditionDescriptions['Great Condition']}`
+    };
+    const getBag = () => {
+      try {
+        return JSON.parse(localStorage.getItem(bagStorageKey) || '[]');
+      } catch {
+        return [];
+      }
+    };
+    const setBag = (items) => localStorage.setItem(bagStorageKey, JSON.stringify(items));
+    const updateBagCount = () => {
+      const totalItems = getBag().reduce((sum, item) => sum + (item.quantity || 1), 0);
+      bagCount.textContent = String(totalItems);
+    };
+    const formatOptions = (raw) => raw.split('/').map(option => option.trim()).filter(Boolean);
+    const renderSelectOptions = (select, options) => {
+      select.innerHTML = options.map(option => `<option value="${option}">${option}</option>`).join('');
+    };
+    const renderSimilarProducts = (currentCard) => {
+      const currentName = currentCard.querySelector('.item-btn span')?.textContent.trim().toLowerCase() || '';
+      const currentBrand = currentCard.dataset.brand;
+      const similarCards = Array.from(cards).filter(card => {
+        const cardName = card.querySelector('.item-btn span')?.textContent.trim().toLowerCase() || '';
+        return cardName !== currentName;
+      });
+      const prioritized = [
+        ...similarCards.filter(card => card.dataset.brand === currentBrand),
+        ...similarCards.filter(card => card.dataset.brand !== currentBrand),
+      ].slice(0, 3);
+
+      similarProducts.innerHTML = prioritized.map(card => {
+        const name = card.querySelector('.item-btn span')?.textContent.trim() || '';
+        const img = card.querySelector('img')?.getAttribute('src') || '';
+        const price = card.querySelector('.price-tag')?.textContent.trim() || '';
+        return `
+          <button class="similar-card" type="button" data-name="${name}">
+            <img src="${img}" alt="${name}">
+            <strong>${name}</strong>
+            <span>${price}</span>
+          </button>
+        `;
+      }).join('');
+
+      similarProducts.querySelectorAll('.similar-card').forEach(button => {
+        button.addEventListener('click', () => {
+          const targetName = button.getAttribute('data-name');
+          const targetCard = Array.from(cards).find(card => card.querySelector('.item-btn span')?.textContent.trim() === targetName);
+          if (targetCard) {
+            openModal(targetCard);
+          }
+        });
+      });
+    };
+
+    const renderDetails = (info) => `
+      <div class="detail-row"><span class="detail-label">Storage</span><span class="detail-value">${info.storage}</span></div>
+      <div class="detail-row"><span class="detail-label">Warranty</span><span class="detail-value">${info.warranty}</span></div>
+      <div class="detail-row"><span class="detail-label">Colors</span><span class="detail-value">${info.colors}</span></div>
+      <div class="detail-row"><span class="detail-label">Reviews</span><span class="detail-value">${info.reviews}</span></div>
+      <div class="detail-row"><span class="detail-label">Condition</span><span class="detail-value">${info.condition}</span></div>
+      <div class="detail-row"><span class="detail-label">Description</span><span class="detail-value">${info.description}</span></div>
+    `;
+
+    const openModal = (card) => {
+      const name = card.querySelector('.item-btn span')?.textContent.trim() || '';
+      const img = card.querySelector('img')?.getAttribute('src') || '';
+      const info = enrichedDetailsByName[name.toLowerCase()] || fallbackDetails;
+      const priceTag = card.querySelector('.price-tag');
+      const priceVal = priceTag.textContent.trim();
+      activeProduct = { name, img, price: priceVal, category: 'phones', info };
+
+      modalTitle.textContent = name;
+      modalImg.src = img;
+      modalImg.alt = name;
+      modalPrice.textContent = priceVal || 'Price unavailable';
+      modalDetails.innerHTML = renderDetails(info);
+      renderSelectOptions(storageSelect, formatOptions(info.storage.replace(/,/g, '/')));
+      renderSelectOptions(colorSelect, info.colors.split(',').map(option => option.trim()).filter(Boolean));
+      quantitySelect.value = '1';
+      bagMessage.textContent = '';
+      renderSimilarProducts(card);
+
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+    bagBtn.addEventListener('click', () => {
+      window.location.href = 'checkout.html';
+    });
+    addToBagBtn.addEventListener('click', () => {
+      if (!activeProduct) return;
+      const bag = getBag();
+      const quantity = Number(quantitySelect.value) || 1;
+      const existingItem = bag.find(item =>
+        item.name === activeProduct.name &&
+        item.category === activeProduct.category &&
+        item.storage === storageSelect.value &&
+        item.color === colorSelect.value
+      );
+      if (existingItem) {
+        existingItem.quantity = (existingItem.quantity || 1) + quantity;
+      } else {
+        bag.push({
+        name: activeProduct.name,
+        image: activeProduct.img,
+        price: activeProduct.price,
+        category: activeProduct.category,
+        storage: storageSelect.value,
+        color: colorSelect.value,
+        quantity
+        });
+      }
+      setBag(bag);
+      updateBagCount();
+      bagMessage.textContent = `Added ${quantity} to bag`;
+    });
+
+    const applyFilters = () => {
+      const activeBrands = Array.from(brandFilters)
+        .filter(input => input.checked)
+        .map(input => input.value);
+
+      cards.forEach(card => {
+        const brand = card.dataset.brand;
+        const matchesBrand = activeBrands.length === 0 || activeBrands.includes(brand);
+        card.style.display = matchesBrand ? 'flex' : 'none';
+      });
+    };
+
+    brandFilters.forEach(input => {
+      input.addEventListener('change', applyFilters);
+    });
+
+    applyFilters();
+    updateBagCount();
+
+    cards.forEach(card => {
+      const name = card.querySelector('.item-btn span')?.textContent.trim().toLowerCase() || '';
+      const priceTag = card.querySelector('.price-tag');
+      if (defaultPrices[name]) {
+        priceTag.textContent = `$${defaultPrices[name]}`;
+      } else {
+        priceTag.textContent = 'Price unavailable';
+      }
+
+      card.addEventListener('click', (e) => {
+        openModal(card);
+      });
+    });
+  </script>
+</body>
+</html>

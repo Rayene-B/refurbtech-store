@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <style>
+    :root {
+      --bg: linear-gradient(135deg, #eef2ff, #f8fafc 40%, #fdf2f8);
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: rgba(148,163,184,0.35);
+      --shadow: 0 20px 60px rgba(15,23,42,0.08);
+      --brand: #2563eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      padding: 28px;
+    }
+    .shell {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) 320px;
+      gap: 24px;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 16px;
+    }
+    .nav-btn {
+      cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+    }
+    .items {
+      display: grid;
+      gap: 14px;
+    }
+    .item {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 110px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+    .item img {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: #fff;
+    }
+    .item h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .qty-select {
+      padding: 10px 12px;
+      border: 1px solid rgba(148,163,184,0.45);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .remove-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      background: #e2e8f0;
+      color: #0f172a;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .price {
+      font-size: 20px;
+      font-weight: 800;
+      text-align: right;
+    }
+    .summary {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      background: linear-gradient(180deg, #f8fafc, #eef2ff);
+      height: fit-content;
+    }
+    .summary h2 {
+      margin-top: 0;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 12px 0;
+      color: var(--muted);
+    }
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .checkout-btn {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #eff6ff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(37,99,235,0.24);
+    }
+    .empty {
+      border: 1px dashed rgba(148,163,184,0.7);
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      background: #fff;
+    }
+    @media (max-width: 900px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+      .item {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .item img {
+        margin: 0 auto;
+      }
+      .price {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section>
+      <div class="top-bar">
+        <div>
+          <h1>Your Bag</h1>
+          <p id="bag-subtitle">Review your selected devices before checkout.</p>
+        </div>
+        <button class="nav-btn" id="continue-shopping" type="button">Continue Shopping</button>
+      </div>
+      <div class="items" id="bag-items"></div>
+    </section>
+    <aside class="summary">
+      <h2>Order Summary</h2>
+      <div class="summary-row"><span>Items</span><span id="summary-count">0</span></div>
+      <div class="summary-row"><span>Shipping</span><span>Free</span></div>
+      <div class="summary-total"><span>Total</span><span id="summary-total">$0</span></div>
+      <button class="checkout-btn" type="button">Proceed to Checkout</button>
+    </aside>
+  </main>
+  <script>
+    const bagStorageKey = 'refurbtech-bag';
+    const bagItems = document.getElementById('bag-items');
+    const summaryCount = document.getElementById('summary-count');
+    const summaryTotal = document.getElementById('summary-total');
+    const bagSubtitle = document.getElementById('bag-subtitle');
+    const getBag = () => {
+      try {
+        return JSON.parse(localStorage.getItem(bagStorageKey) || '[]');
+      } catch {
+        return [];
+      }
+    };
+    const setBag = (items) => localStorage.setItem(bagStorageKey, JSON.stringify(items));
+    const parsePrice = (value) => Number(String(value).replace(/[^0-9.]/g, '')) || 0;
+    const renderBag = () => {
+      const bag = getBag();
+      const totalItems = bag.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      summaryCount.textContent = String(totalItems);
+      const total = bag.reduce((sum, item) => sum + (parsePrice(item.price) * (item.quantity || 1)), 0);
+      summaryTotal.textContent = `$${total}`;
+      if (!bag.length) {
+        bagItems.innerHTML = '<div class="empty">Your bag is empty. Add a device from any category page to continue.</div>';
+        bagSubtitle.textContent = 'Your bag is currently empty.';
+        return;
+      }
+      bagSubtitle.textContent = 'Review your selected devices before checkout.';
+      bagItems.innerHTML = bag.map(item => `
+        <article class="item" data-key="${item.name}||${item.category}||${item.storage}||${item.color}">
+          <img src="${item.image}" alt="${item.name}">
+          <div>
+            <h3>${item.name}</h3>
+            <p class="meta">Category: ${item.category}</p>
+            <p class="meta">Storage: ${item.storage}</p>
+            <p class="meta">Color: ${item.color}</p>
+            <div class="item-actions">
+              <select class="qty-select" aria-label="Quantity">
+                <option value="1" ${item.quantity === 1 ? 'selected' : ''}>1</option>
+                <option value="2" ${item.quantity === 2 ? 'selected' : ''}>2</option>
+                <option value="3" ${item.quantity === 3 ? 'selected' : ''}>3</option>
+                <option value="4" ${item.quantity === 4 ? 'selected' : ''}>4</option>
+                <option value="5" ${item.quantity === 5 ? 'selected' : ''}>5</option>
+                <option value="6" ${item.quantity === 6 ? 'selected' : ''}>6</option>
+                <option value="7" ${item.quantity === 7 ? 'selected' : ''}>7</option>
+                <option value="8" ${item.quantity === 8 ? 'selected' : ''}>8</option>
+                <option value="9" ${item.quantity === 9 ? 'selected' : ''}>9</option>
+                <option value="10" ${item.quantity === 10 ? 'selected' : ''}>10</option>
+              </select>
+              <button class="remove-btn" type="button">Remove</button>
+            </div>
+          </div>
+          <div class="price">${item.price}<br><span class="meta">Qty ${item.quantity || 1}</span></div>
+        </article>
+      `).join('');
+      bagItems.querySelectorAll('.item').forEach(card => {
+        const key = card.getAttribute('data-key');
+        const qtySelect = card.querySelector('.qty-select');
+        const removeBtn = card.querySelector('.remove-btn');
+        qtySelect.addEventListener('change', () => {
+          const updatedBag = getBag().map(item => {
+            const itemKey = `${item.name}||${item.category}||${item.storage}||${item.color}`;
+            if (itemKey === key) {
+              return { ...item, quantity: Number(qtySelect.value) || 1 };
+            }
+            return item;
+          });
+          setBag(updatedBag);
+          renderBag();
+        });
+        removeBtn.addEventListener('click', () => {
+          const updatedBag = getBag().filter(item => `${item.name}||${item.category}||${item.storage}||${item.color}` !== key);
+          setBag(updatedBag);
+          renderBag();
+        });
+      });
+    };
+    document.getElementById('continue-shopping').addEventListener('click', () => {
+      window.location.href = 'mainscreen.html';
+    });
+    renderBag();
+  </script>
+</body>
+</html>
