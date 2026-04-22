@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+auth.db
+auth.db-journal
+auth_store.json
+User-microservice/
