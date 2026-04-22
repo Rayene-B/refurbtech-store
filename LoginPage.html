@@ -152,10 +152,43 @@
 
     <button class="theme-toggle" id="theme-toggle" type="button">Light</button>
 
-    <script src="backend-config.js"></script>
     <script src="ui-preferences.js"></script>
     <script>
         const sessionStorageKey = 'refurbtech-session';
+        const userStorageKey = 'refurbtech-users';
+
+        function readUsers() {
+            try {
+                const users = JSON.parse(localStorage.getItem(userStorageKey) || '[]');
+                return Array.isArray(users) ? users : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(userStorageKey, JSON.stringify(users));
+        }
+
+        function normalizeEmail(value) {
+            return String(value || '').trim().toLowerCase();
+        }
+
+        function createSession(user) {
+            return {
+                token: 'local-session',
+                user: {
+                    email: user.email,
+                    username: user.username
+                }
+            };
+        }
+
+        function redirectToHome() {
+            setTimeout(() => {
+                window.location.href = 'mainscreen.html';
+            }, 700);
+        }
 
         function showSignup() {
             document.getElementById('login-form').style.display = 'none';
@@ -181,9 +214,9 @@
             messageDiv.className = isSuccess ? 'message success' : 'message';
         }
 
-        async function signup() {
+        function signup() {
             const username = document.getElementById('signup-username').value.trim();
-            const email = document.getElementById('signup-email').value.trim();
+            const email = normalizeEmail(document.getElementById('signup-email').value);
             const password = document.getElementById('signup-password').value;
 
             if (!username || !email || !password) {
@@ -191,30 +224,23 @@
                 return;
             }
 
-            const config = window.RefurbBackend.getConfig();
-
-            try {
-                const response = await fetch(window.RefurbBackend.buildUrl(config.authBaseUrl, '/signup'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, password })
-                });
-                const payload = await response.json();
-                if (!response.ok) {
-                    showMessage(payload.message || 'Sign up failed.');
-                    return;
-                }
-
-                localStorage.setItem(sessionStorageKey, JSON.stringify(payload));
-                showMessage('', true);
-                setTimeout(() => { window.location.href = 'mainscreen.html'; }, 1000);
-            } catch {
-                showMessage('Unable to create account right now.');
+            const users = readUsers();
+            const existingUser = users.find((user) => normalizeEmail(user.email) === email);
+            if (existingUser) {
+                showMessage('An account with this email already exists.');
+                return;
             }
+
+            const newUser = { username, email, password };
+            users.push(newUser);
+            saveUsers(users);
+            localStorage.setItem(sessionStorageKey, JSON.stringify(createSession(newUser)));
+            showMessage('Account created successfully.', true);
+            redirectToHome();
         }
 
-        async function login() {
-            const email = document.getElementById('login-email').value.trim();
+        function login() {
+            const email = normalizeEmail(document.getElementById('login-email').value);
             const password = document.getElementById('login-password').value;
 
             if (!email || !password) {
@@ -222,26 +248,15 @@
                 return;
             }
 
-            const config = window.RefurbBackend.getConfig();
-
-            try {
-                const response = await fetch(window.RefurbBackend.buildUrl(config.authBaseUrl, '/login'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-                const payload = await response.json();
-                if (!response.ok) {
-                    showMessage(payload.message || 'Login failed.');
-                    return;
-                }
-
-                localStorage.setItem(sessionStorageKey, JSON.stringify(payload));
-                showMessage('', true);
-                setTimeout(() => { window.location.href = 'mainscreen.html'; }, 1000);
-            } catch {
-                showMessage('Unable to log in right now.');
+            const user = readUsers().find((entry) => normalizeEmail(entry.email) === email);
+            if (!user || user.password !== password) {
+                showMessage('Incorrect email or password.');
+                return;
             }
+
+            localStorage.setItem(sessionStorageKey, JSON.stringify(createSession(user)));
+            showMessage('Login successful.', true);
+            redirectToHome();
         }
 
         function goBack() {
