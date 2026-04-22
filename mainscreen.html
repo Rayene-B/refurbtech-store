@@ -59,6 +59,15 @@
       justify-content: space-between;
       margin-bottom: 14px;
     }
+    .nav-btn {
+      cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      color: #0f172a;
+    }
     .brand {
       display: flex;
       align-items: center;
@@ -79,6 +88,71 @@
       grid-template-columns: 1fr;
       gap: 8px;
       margin-bottom: 18px;
+    }
+    .search-shell {
+      position: relative;
+      margin: -10px auto 8px;
+      width: min(720px, 100%);
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(148,163,184,0.45);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      font-size: 15px;
+    }
+    .search-results {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      right: 0;
+      display: none;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid rgba(148,163,184,0.35);
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      z-index: 15;
+    }
+    .search-results.show {
+      display: grid;
+    }
+    .search-result {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid rgba(148,163,184,0.3);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      color: inherit;
+      text-decoration: none;
+    }
+    .search-result img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      border-radius: 10px;
+      background: #fff;
+    }
+    .search-result strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+    .search-result span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .search-empty {
+      padding: 14px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(148,163,184,0.55);
+      border-radius: 12px;
     }
     .store-name {
       margin: 0;
@@ -178,10 +252,16 @@
 </head>
 <body>
   <div class="page-wrap">
+    <div class="search-shell">
+      <input class="search-input" id="global-search" type="text" placeholder="Search any product">
+      <div class="search-results" id="global-search-results"></div>
+    </div>
     <p class="store-name">GARAD's Refurb Tech</p>
     <main class="shell">
       <div class="top-bar">
+        <button class="nav-btn" id="back-btn" type="button">Back</button>
         <div class="brand"><span class="brand-dot"></span>RefurbTech</div>
+        <span></span>
       </div>
 
       <div class="hero">
@@ -190,7 +270,6 @@
           <p class="subtitle">Curated, refurbished tech with up to 2-year warranty.</p>
         </div>
       </div>
-
       <div class="buttons">
         <button type="button" data-target="phones.html">
           <img class="banner" src="phones banner.png" alt="Phones banner">
@@ -217,6 +296,8 @@
     </main>
   </div>
   <button class="theme-toggle" id="theme-toggle" type="button">🌞 Light</button>
+  <script src="catalog.js"></script>
+  <script src="ui-preferences.js"></script>
   <script>
     // Redirect any element with data-target to its matching page
     document.querySelectorAll('[data-target]').forEach(btn => {
@@ -226,6 +307,47 @@
           window.location.href = target;
         }
       });
+    });
+    const globalSearch = document.getElementById('global-search');
+    const globalSearchResults = document.getElementById('global-search-results');
+    const renderSearchResults = (query) => {
+      const results = window.searchRefurbCatalog(query);
+      if (!query.trim()) {
+        globalSearchResults.classList.remove('show');
+        globalSearchResults.innerHTML = '';
+        return;
+      }
+      if (!results.length) {
+        globalSearchResults.classList.add('show');
+        globalSearchResults.innerHTML = '<div class="search-empty">Item not found</div>';
+        return;
+      }
+      globalSearchResults.classList.add('show');
+      globalSearchResults.innerHTML = results.map(item => `
+        <a class="search-result" href="${item.page}?search=${encodeURIComponent(item.name)}">
+          <img src="${item.image}" alt="${item.name}">
+          <div>
+            <strong>${item.name}</strong>
+            <span>${item.category} • ${item.brand}</span>
+          </div>
+          <span>Open</span>
+        </a>
+      `).join('');
+    };
+    globalSearch.addEventListener('input', () => {
+      renderSearchResults(globalSearch.value);
+    });
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.search-shell')) {
+        globalSearchResults.classList.remove('show');
+      }
+    });
+    document.getElementById('back-btn').addEventListener('click', () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'LoginPage.html';
+      }
     });
     const toggleBtn = document.getElementById('theme-toggle');
     const applyTheme = (mode) => {

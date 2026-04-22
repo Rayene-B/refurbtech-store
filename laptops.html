@@ -552,6 +552,8 @@
       </div>
     </div>
   </div>
+  <script src="catalog.js"></script>
+  <script src="ui-preferences.js"></script>
   <script>
     const bagStorageKey = 'refurbtech-bag';
     document.getElementById('back-btn').addEventListener('click', () => {
@@ -598,6 +600,9 @@
     const bagBtn = document.getElementById('bag-btn');
     const bagCount = document.getElementById('bag-count');
     const similarProducts = document.getElementById('similar-products');
+    const searchInput = document.querySelector('.search-input');
+    const sortInputs = document.querySelectorAll('#sort-options input[name="sort"]');
+    const buttonsGrid = document.querySelector('.buttons');
     let activeProduct = null;
 
     const fallback = { storage: '8 / 16 GB RAM, 256 / 512 GB SSD', warranty: '12 months', colors: 'Silver / Black', reviews: '4.5★' };
@@ -772,22 +777,44 @@
       const activeBrands = Array.from(brandFilters)
         .filter(input => input.checked)
         .map(input => input.value);
+      const searchTerm = String(searchInput?.value || '').trim().toLowerCase();
+      const activeSort = document.querySelector('#sort-options input[name="sort"]:checked')?.value || '';
 
-      cards.forEach(card => {
+      const sortedCards = Array.from(cards).sort((a, b) => {
+        const getPrice = (card) => parseFloat((card.querySelector('.price-tag')?.textContent || '').replace(/[^0-9.]/g, '')) || 0;
+        if (activeSort === 'low') return getPrice(a) - getPrice(b);
+        if (activeSort === 'high') return getPrice(b) - getPrice(a);
+        if (activeSort === 'newest') return Number(b.dataset.originalIndex) - Number(a.dataset.originalIndex);
+        return Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex);
+      });
+
+      sortedCards.forEach(card => {
         const brand = card.dataset.brand;
+        const name = card.querySelector('.item-btn span')?.textContent.trim().toLowerCase() || '';
         const matchesBrand = activeBrands.length === 0 || activeBrands.includes(brand);
-        card.style.display = matchesBrand ? 'flex' : 'none';
+        const matchesSearch = !searchTerm || name.includes(searchTerm);
+        card.style.display = matchesBrand && matchesSearch ? 'flex' : 'none';
+        buttonsGrid.appendChild(card);
       });
     };
 
     brandFilters.forEach(input => {
       input.addEventListener('change', applyFilters);
     });
+    searchInput.addEventListener('input', applyFilters);
+    sortInputs.forEach(input => input.addEventListener('change', applyFilters));
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const initialSearch = searchParams.get('search');
+    if (initialSearch) {
+      searchInput.value = initialSearch;
+    }
 
     applyFilters();
     updateBagCount();
 
-    cards.forEach(card => {
+    cards.forEach((card, index) => {
+      card.dataset.originalIndex = String(index);
       const name = card.querySelector('.item-btn span')?.textContent.trim().toLowerCase() || '';
       const priceTag = card.querySelector('.price-tag');
       if (defaultPrices[name]) {

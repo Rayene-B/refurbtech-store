@@ -151,6 +151,11 @@
       font-size: 16px;
       color: #475569;
     }
+    .live-note {
+      margin: -6px 0 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
     .search-row {
       display: flex;
       justify-content: center;
@@ -494,6 +499,7 @@
         <input class="search-input" type="text" placeholder="Search here">
       </div>
       <p class="subtitle">Our best sellers</p>
+      <p class="live-note" id="live-note">Using local product data.</p>
       <div class="buttons">
         <div class="card" data-brand="iphone"><button class="item-btn" type="button"><img src="iphone 11.png" alt="iphone 11"><span>iphone 11</span></button><div class="price-tag"></div></div>
         <div class="card" data-brand="samsung"><button class="item-btn" type="button"><img src="samsung s22 ultra.png" alt="samsung s22 ultra"><span>samsung s22 ultra</span></button><div class="price-tag"></div></div>
@@ -559,6 +565,9 @@
       </div>
     </div>
   </div>
+  <script src="backend-config.js"></script>
+  <script src="catalog.js"></script>
+  <script src="ui-preferences.js"></script>
   <script>
     const bagStorageKey = 'refurbtech-bag';
     document.getElementById('back-btn').addEventListener('click', () => {
@@ -605,6 +614,10 @@
     const bagBtn = document.getElementById('bag-btn');
     const bagCount = document.getElementById('bag-count');
     const similarProducts = document.getElementById('similar-products');
+    const liveNote = document.getElementById('live-note');
+    const searchInput = document.querySelector('.search-input');
+    const sortInputs = document.querySelectorAll('#sort-options input[name="sort"]');
+    const buttonsGrid = document.querySelector('.buttons');
     let activeProduct = null;
 
     const fallback = { storage: '64 / 128 / 256 GB', warranty: '12 months', colors: 'Black / Silver', reviews: '4.5★' };
@@ -787,22 +800,44 @@
       const activeBrands = Array.from(brandFilters)
         .filter(input => input.checked)
         .map(input => input.value);
+      const searchTerm = String(searchInput?.value || '').trim().toLowerCase();
+      const activeSort = document.querySelector('#sort-options input[name="sort"]:checked')?.value || '';
 
-      cards.forEach(card => {
+      const sortedCards = Array.from(cards).sort((a, b) => {
+        const getPrice = (card) => parseFloat((card.querySelector('.price-tag')?.textContent || '').replace(/[^0-9.]/g, '')) || 0;
+        if (activeSort === 'low') return getPrice(a) - getPrice(b);
+        if (activeSort === 'high') return getPrice(b) - getPrice(a);
+        if (activeSort === 'newest') return Number(b.dataset.originalIndex) - Number(a.dataset.originalIndex);
+        return Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex);
+      });
+
+      sortedCards.forEach(card => {
         const brand = card.dataset.brand;
+        const name = card.querySelector('.item-btn span')?.textContent.trim().toLowerCase() || '';
         const matchesBrand = activeBrands.length === 0 || activeBrands.includes(brand);
-        card.style.display = matchesBrand ? 'flex' : 'none';
+        const matchesSearch = !searchTerm || name.includes(searchTerm);
+        card.style.display = matchesBrand && matchesSearch ? 'flex' : 'none';
+        buttonsGrid.appendChild(card);
       });
     };
 
     brandFilters.forEach(input => {
       input.addEventListener('change', applyFilters);
     });
+    searchInput.addEventListener('input', applyFilters);
+    sortInputs.forEach(input => input.addEventListener('change', applyFilters));
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const initialSearch = searchParams.get('search');
+    if (initialSearch) {
+      searchInput.value = initialSearch;
+    }
 
     applyFilters();
     updateBagCount();
 
-    cards.forEach(card => {
+    cards.forEach((card, index) => {
+      card.dataset.originalIndex = String(index);
       const name = card.querySelector('.item-btn span')?.textContent.trim().toLowerCase() || '';
       const priceTag = card.querySelector('.price-tag');
       if (defaultPrices[name]) {
@@ -815,6 +850,52 @@
         openModal(card);
       });
     });
+
+    const syncRecommendationData = async () => {
+      try {
+        const recommendations = await window.RefurbBackend.apiFetch('recommendation', '/recommend/hot', {
+          method: 'GET',
+          json: false
+        });
+
+        if (!Array.isArray(recommendations) || !recommendations.length) {
+          liveNote.textContent = 'Recommendation service responded without product data. Using local catalogue.';
+          return;
+        }
+
+        let matchedCount = 0;
+        recommendations.forEach(item => {
+          const productName = String(item.name || '').trim().toLowerCase();
+          const card = Array.from(cards).find(entry => entry.querySelector('.item-btn span')?.textContent.trim().toLowerCase() === productName);
+          if (!card) {
+            return;
+          }
+
+          matchedCount += 1;
+          const priceTag = card.querySelector('.price-tag');
+          if (typeof item.price === 'number') {
+            priceTag.textContent = `$${item.price}`;
+          }
+
+          const existingDetails = enrichedDetailsByName[productName] || fallbackDetails;
+          enrichedDetailsByName[productName] = {
+            ...existingDetails,
+            reviews: typeof item.views === 'number' ? `${item.views} views` : existingDetails.reviews,
+            description: typeof item.stock === 'number'
+              ? `${existingDetails.condition}: ${item.stock} left in stock on the recommendation service.`
+              : existingDetails.description
+          };
+        });
+
+        liveNote.textContent = matchedCount
+          ? `Recommendation service connected. Synced live pricing/details for ${matchedCount} phone${matchedCount === 1 ? '' : 's'}.`
+          : 'Using live catalogue details.';
+      } catch (error) {
+        liveNote.textContent = 'Using local catalogue.';
+      }
+    };
+
+    syncRecommendationData();
   </script>
 </body>
 </html>

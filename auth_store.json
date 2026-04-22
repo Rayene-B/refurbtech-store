@@ -1,0 +1,30 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "rayene.bouanene@gmail.com",
+      "password_hash": "1ba208a0e99480bcdcc081bedfc09c7d05ffae385014fcc7f6b3f5208054d49f",
+      "salt": "4fe13998fda78a7edb25fb184dbf7b74"
+    },
+    {
+      "id": 2,
+      "email": "rayenefamily@gmail.com",
+      "password_hash": "ac1b84ff1d72329da9d9c9187e8d5be6cb101b975aed9853c5fc532e22d21812",
+      "salt": "5ee07ac410fc4862343525eca1fe1bb8"
+    }
+  ],
+  "sessions": [
+    {
+      "token": "ZUPY-3JRrfC10o3lzljbluZgPo7rE9KsdDCWHHh_Uw0",
+      "user_id": 1
+    },
+    {
+      "token": "E8wUH32Ux2XFc-beZxiHMeyjvGV9rNHxZi9U8h4RMAM",
+      "user_id": 2
+    },
+    {
+      "token": "0IlOfC9kJIfqYKl7L7wxh-yctASx4NwJMbAsc7ubcbE",
+      "user_id": 2
+    }
+  ]
+}
