@@ -206,10 +206,10 @@
                 }
 
                 localStorage.setItem(sessionStorageKey, JSON.stringify(payload));
-                showMessage('Account created successfully! Redirecting...', true);
+                showMessage('', true);
                 setTimeout(() => { window.location.href = 'mainscreen.html'; }, 1000);
             } catch {
-                showMessage('Sign up is unavailable right now.');
+                showMessage('Unable to create account right now.');
             }
         }
 
@@ -237,10 +237,10 @@
                 }
 
                 localStorage.setItem(sessionStorageKey, JSON.stringify(payload));
-                showMessage('Login successful! Redirecting...', true);
+                showMessage('', true);
                 setTimeout(() => { window.location.href = 'mainscreen.html'; }, 1000);
             } catch {
-                showMessage('Login is unavailable right now.');
+                showMessage('Unable to log in right now.');
             }
         }
 

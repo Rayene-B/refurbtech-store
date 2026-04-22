@@ -233,6 +233,15 @@
       align-items: center;
       gap: 8px;
     }
+    .credits {
+      margin: 2px 0 0;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.2px;
+      color: var(--muted);
+      text-align: center;
+      font-family: "Segoe UI Light", "Segoe UI", system-ui, sans-serif;
+    }
   </style>
 </head>
 <body>
@@ -278,6 +287,7 @@
         </button>
       </div>
     </main>
+    <p class="credits">Front end: Rayene, David, Gabriel, Back end: Abhey, Alex</p>
   </div>
   <button class="theme-toggle" id="theme-toggle" type="button">🌞 Light</button>
   <script src="catalog.js"></script>
@@ -292,6 +302,11 @@
         }
       });
     });
+    if (localStorage.getItem('refurbtech-session')) {
+      document.querySelectorAll('[data-target="phones.html"], [data-target="laptops.html"], [data-target="consoles.html"]').forEach(button => {
+        button.dataset.authReady = 'true';
+      });
+    }
     const globalSearch = document.getElementById('global-search');
     const globalSearchResults = document.getElementById('global-search-results');
     const renderSearchResults = (query) => {

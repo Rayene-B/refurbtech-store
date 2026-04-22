@@ -501,7 +501,7 @@
           body: JSON.stringify(payload)
         });
         addressForm.reset();
-        addressStatus.textContent = 'Address saved.';
+        addressStatus.textContent = '';
         await loadAddresses();
       } catch {
         addressStatus.textContent = '';
@@ -536,6 +536,10 @@
       renderReviews();
     });
     proceedToCheckoutButton.addEventListener('click', () => {
+      if (!localStorage.getItem('refurbtech-session')) {
+        window.location.href = 'LoginPage.html';
+        return;
+      }
       checkoutDetails.classList.remove('hidden');
       feedbackPanel.classList.remove('hidden');
       checkoutDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
